@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Modificar</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+    <main class="centrado sombras">
+        <% if(usuario){ %>
+        <div>
+            <h2 class="titulo">Cambie los campos del formulario</h2>
+			<form class="formulario" action="/actualizar" method="post" enctype="text/html">
+				<fieldset>
+					<legend>Contactanos</legend>
+					<div class="formulario-campos">
+						<div class="campos">
+							<label for="nombre">Nombre:</label>
+							<input  class="input" type="text" name="nombre" id="nombre" placeholder="Tu nombre" value="<%= usuario.nombre %>">
+						</div>
+						
+						<div class="campos">
+							<label for="telefono">Telefono:</label>
+							<input  class="input" type="number" name="telefono" id="telefono" placeholder="Tu telefono" value="<%= usuario.telefono %>">
+						</div>
+
+						<div class="campos">
+							<label for="email">Correo:</label>
+							<input  class="input" type="email" name="email" id="email" placeholder="Tu E-mail" value="<%= usuario.email %>">						
+						</div>
+						
+						<div class="campos">
+							<label for="mensaje">Mensaje:</label>
+							<textarea placeholder="Dejanos tu mensaje" name="mensaje" id="mensaje"> <%= usuario.mensaje %> </textarea>
+						</div>
+					</div>
+                    <div class="campos">
+                        <input type="radio" name="id" id="id" checked value="<%= usuario.idcontacto %>">
+                        <label for="id">ID: <%= usuario.idcontacto %></label>
+                    </div>
+					<div class="campos flex alinear-derecha">
+						<input class="boton" type="submit" id="aceptar" value="Enviar">
+						<input class="boton" type="reset" id="resetar" value="Borrar">
+					</div>
+				</fieldset>
+			</form>	
+		</div>
+        <% } %>
+    </main>
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>

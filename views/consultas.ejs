@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Consultas</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+
+    <main class="centrado sombras" style="max-width: 120rem; min-width: 86rem;">
+        <a href="/" class="btn btn-outline-primary mt-4"> <i class='bx bx-plus-circle bx-ld'></i> Añadir </a> 
+        <table class="table table-bordered tabled-striped text-center mt-4">
+            <thead>
+                <tr>
+                    <th><a href="/consultas/<%= 'idcontacto' %>" class="table-header"> Id de Usuario <i class='bx bxs-up-arrow' ></i></a></i></th>
+                    <th><a href="/consultas/<%= 'nombre' %>" class="table-header"> Nombre <i class='bx bxs-up-arrow' ></i></a></i></th>
+                    <th>Telefono</th>
+                    <th>E-mail</th>
+                    <th>Mensaje</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(resultados.length === 0){ %>
+                    <tr>
+                        <td><strong> Aun no hay Alumnos cargados </strong></td>
+                    </tr>
+                <% }else{ %>
+                <% resultados.forEach((usuario)=>{ %>
+                    <tr>
+                        <td> <%= usuario.idcontacto %></td>
+                        <td> <%= usuario.nombre %></td>
+                        <td> <%= usuario.telefono %></td>
+                        <td> <%= usuario.email %></td>
+                        <td> <%= usuario.mensaje %></td>
+                        <td>
+                           <a href="/modificar/<%= usuario.idcontacto %>" class="btn btn-outline-info">Editar</a>
+                           <a href="/eliminar/<%= usuario.idcontacto %>" class="btn btn-outline-danger">Borrar</a>
+                        </td>
+                    </tr>
+                <% })} %>
+            </tbody>
+        </table>
+    </main>
+
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>
