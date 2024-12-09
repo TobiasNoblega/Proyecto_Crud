@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+    <div>
+        <form action="/auth" method="post">
+            <fieldset>
+                <legend>Login</legend>
+                <div>
+                    <div>
+                        <input type="text" name="usuario" id="usuario">
+                    </div>
+                    <div>
+                        <input type="password" name="password" id="password">
+                    </div>
+                </div>
+                <input type="submit" value="Iniciar sesion">
+                <a href="/registro">Registrar</a>
+            </fieldset>
+        </form>
+    </div>
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>

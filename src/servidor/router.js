@@ -3,9 +3,14 @@ const router = express.Router();
 const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
 
-//ruta inicial
+//Ruta inicial
 router.get('/',(req,res)=>{
     res.render('index');
+});
+
+//Ruta login
+router.get('/login',(req,res)=>{
+    res.render('login');
 });
 
 //Ruta consultas
