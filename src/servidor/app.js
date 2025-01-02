@@ -12,9 +12,10 @@ app.use(express.urlencoded({extended:false}));
 app.use('/', require('./router'));
 app.use(session({
     secret: 'secret',
-    resave: 'true',
-    saveUnitialized: 'true'
+    resave: true,
+    saveUninitialized: true
 }));
+
 
 app.use('/',require('./router.js'));
 
