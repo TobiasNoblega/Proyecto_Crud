@@ -13,63 +13,115 @@ router.get('/login',(req,res)=>{
     res.render('login');
 });
 
-//Ruta consultas
-router.get('/consultas', (req,res)=>{
-    const consulta = `SELECT * FROM contacto;`;
-    conexion.query(consulta, (err, registros)=>{
-        if(err){
-            throw err;
-        }else{
-            res.render('consultas', {resultados: registros});
+// Ruta consultas
+router.get('/consultas', (req, res) => {
+    Contacto.find({}, (err, registros) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al obtener contactos');
+        } else {
+            res.render('consultas', { resultados: registros });
         }
     });
 });
 
-//ruta para modificar
-router.get('/modificar/:id', (req,res)=>{
+// Ruta para modificar
+router.get('/modificar/:id', (req, res) => {
     const id = req.params.id;
-    const busca = `SELECT * from contacto WHERE idcontacto = ${id};`;
-    conexion.query(busca, (err,registro)=>{
-        if(err){
-            throw err;
-        }else{
-            res.render('modificar', {usuario: registro[0]})
+
+    // Buscar contacto por ID
+    Contacto.findById(id, (err, contacto) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al obtener el contacto');
+        } else {
+            res.render('modificar', { usuario: contacto });
         }
     });
-})
+});
 
-//ruta para eliminar
-router.get('/eliminar/:id', (req,res)=>{
+router.post('/modificar/:id', (req, res) => {
     const id = req.params.id;
-    let muestra;
-    const borrar = `DELETE from contacto WHERE idcontacto = ${id};`;
-    conexion.query(borrar, (err)=>{
-        if(err){
-            throw err;
-        }else{
-            muestra = `Contacto eliminado con exito`
-            res.render('index', {muestra})
+    const { nombre, telefono, email, mensaje } = req.body;
+
+    // Actualizar contacto con ID
+    Contacto.updateOne(
+        { _id: id }, // Filtro: busca por el ID
+        { nombre, telefono, email, mensaje }, // Datos actualizados
+        (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error al modificar el contacto');
+            } else {
+                res.render('index', { muestra: 'Datos modificados exitosamente' });
+            }
+        }
+    );
+});
+
+// Ruta para eliminar
+router.get('/eliminar/:id', (req, res) => {
+    const id = req.params.id;
+
+    // Eliminar contacto por ID
+    Contacto.deleteOne({ _id: id }, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al eliminar el contacto');
+        } else {
+            res.render('index', { muestra: 'Contacto eliminado con éxito' });
         }
     });
-})
+});
 
-//ruta para ordenar por nombre
-router.get('/consultas/:ordena', (req,res)=>{
+// Ruta para ordenar
+router.get('/consultas/:ordena', (req, res) => {
     const criterio = req.params.ordena;
-    const ordenada = `SELECT * from contacto ORDER BY ${criterio};`;
-    conexion.query(ordenada,(err, registros)=>{
-        if(err){
-            throw err;
-        }else{
-            res.render('consultas', {resultados: registros});
-        }
 
-    })
+    Contacto.find({})
+        .sort({ [criterio]: 1 }) // Ordena según el criterio (1: ascendente, -1: descendente)
+        .exec((err, registros) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error al ordenar los contactos');
+            } else {
+                res.render('consultas', { resultados: registros });
+            }
+        });
 });
 
 
 
-router.post('/enviar', crud.enviar);
-router.post('/actualizar', crud.actualizar);
+router.post('/enviar', (req, res) => {
+    const { nombre, telefono, email, mensaje } = req.body;
+
+    const nuevoContacto = new Contacto({ nombre, telefono, email, mensaje });
+
+    nuevoContacto.save((err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al enviar el formulario');
+        } else {
+            res.render('index', { muestra: 'Formulario enviado exitosamente' });
+        }
+    });
+});
+
+router.post('/actualizar', (req, res) => {
+    const { nombre, telefono, email, mensaje, id } = req.body;
+
+    Contacto.updateOne(
+        { _id: id },  // Filtrar por el ID del contacto
+        { nombre, telefono, email, mensaje },  // Los nuevos valores
+        (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error al actualizar el contacto');
+            } else {
+                res.render('index', { muestra: 'Datos modificados exitosamente' });
+            }
+        }
+    );
+});
 
 module.exports = router;
