@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
+const contacto = require('./models/contacto');
 
 //Ruta inicial
 router.get('/',(req,res)=>{
@@ -15,7 +16,7 @@ router.get('/login',(req,res)=>{
 
 // Ruta consultas
 router.get('/consultas', (req, res) => {
-    Contacto.find({}, (err, registros) => {
+    contacto.find({}, (err, registros) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error al obtener contactos');
@@ -30,7 +31,7 @@ router.get('/modificar/:id', (req, res) => {
     const id = req.params.id;
 
     // Buscar contacto por ID
-    Contacto.findById(id, (err, contacto) => {
+    contacto.findById(id, (err, contacto) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error al obtener el contacto');
@@ -45,7 +46,7 @@ router.post('/modificar/:id', (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
 
     // Actualizar contacto con ID
-    Contacto.updateOne(
+    contacto.updateOne(
         { _id: id }, // Filtro: busca por el ID
         { nombre, telefono, email, mensaje }, // Datos actualizados
         (err) => {
@@ -64,7 +65,7 @@ router.get('/eliminar/:id', (req, res) => {
     const id = req.params.id;
 
     // Eliminar contacto por ID
-    Contacto.deleteOne({ _id: id }, (err) => {
+    contacto.deleteOne({ _id: id }, (err) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error al eliminar el contacto');
@@ -78,7 +79,7 @@ router.get('/eliminar/:id', (req, res) => {
 router.get('/consultas/:ordena', (req, res) => {
     const criterio = req.params.ordena;
 
-    Contacto.find({})
+    contacto.find({})
         .sort({ [criterio]: 1 }) // Ordena según el criterio (1: ascendente, -1: descendente)
         .exec((err, registros) => {
             if (err) {
@@ -95,7 +96,7 @@ router.get('/consultas/:ordena', (req, res) => {
 router.post('/enviar', (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
 
-    const nuevoContacto = new Contacto({ nombre, telefono, email, mensaje });
+    const nuevoContacto = new contacto({ nombre, telefono, email, mensaje });
 
     nuevoContacto.save((err) => {
         if (err) {
@@ -110,7 +111,7 @@ router.post('/enviar', (req, res) => {
 router.post('/actualizar', (req, res) => {
     const { nombre, telefono, email, mensaje, id } = req.body;
 
-    Contacto.updateOne(
+    contacto.updateOne(
         { _id: id },  // Filtrar por el ID del contacto
         { nombre, telefono, email, mensaje },  // Los nuevos valores
         (err) => {
