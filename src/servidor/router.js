@@ -15,114 +15,105 @@ router.get('/login',(req,res)=>{
 });
 
 // Ruta consultas
-router.get('/consultas', (req, res) => {
-    contacto.find({}, (err, registros) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al obtener contactos');
-        } else {
-            res.render('consultas', { resultados: registros });
-        }
-    });
+//router.get('/consultas', (req, res) => {
+//    contacto.find({}, (err, registros) => {
+//        if (err) {
+//            console.error(err);
+//            res.status(500).send('Error al obtener contactos');
+//        } else {
+//            res.render('consultas', { resultados: registros });
+//        }
+//    });
+//});
+router.get('/consultas', async (req, res) => {
+    try {
+        const contactos = await contacto.find({});
+        res.render('consultas', { resultados: contactos });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener contactos');
+    }
 });
 
-// Ruta para modificar
-router.get('/modificar/:id', (req, res) => {
+// Ruta modificar
+router.get('/modificar/:id', async (req, res) => {
     const id = req.params.id;
-
-    // Buscar contacto por ID
-    contacto.findById(id, (err, contacto) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al obtener el contacto');
-        } else {
-            res.render('modificar', { usuario: contacto });
+    try {
+        const usuario = await contacto.findById(id);
+        if (!usuario) {
+            return res.status(404).send('Contacto no encontrado');
         }
-    });
+        res.render('modificar', { usuario });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al obtener el contacto');
+    }
 });
 
-router.post('/modificar/:id', (req, res) => {
+router.post('/modificar/:id', async (req, res) => {
     const id = req.params.id;
     const { nombre, telefono, email, mensaje } = req.body;
 
-    // Actualizar contacto con ID
-    contacto.updateOne(
-        { _id: id }, // Filtro: busca por el ID
-        { nombre, telefono, email, mensaje }, // Datos actualizados
-        (err) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error al modificar el contacto');
-            } else {
-                res.render('index', { muestra: 'Datos modificados exitosamente' });
-            }
-        }
-    );
+    try {
+        await contacto.updateOne({ _id: id }, { nombre, telefono, email, mensaje });
+        res.render('index', { muestra: 'Datos modificados exitosamente' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al modificar el contacto');
+    }
 });
 
 // Ruta para eliminar
-router.get('/eliminar/:id', (req, res) => {
+router.get('/eliminar/:id', async (req, res) => {
     const id = req.params.id;
 
-    // Eliminar contacto por ID
-    contacto.deleteOne({ _id: id }, (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al eliminar el contacto');
-        } else {
-            res.render('index', { muestra: 'Contacto eliminado con éxito' });
-        }
-    });
+    try {
+        await contacto.deleteOne({ _id: id });
+        res.render('index', { muestra: 'Contacto eliminado con éxito' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al eliminar el contacto');
+    }
 });
 
 // Ruta para ordenar
-router.get('/consultas/:ordena', (req, res) => {
+router.get('/consultas/:ordena', async (req, res) => {
     const criterio = req.params.ordena;
 
-    contacto.find({})
-        .sort({ [criterio]: 1 }) // Ordena según el criterio (1: ascendente, -1: descendente)
-        .exec((err, registros) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error al ordenar los contactos');
-            } else {
-                res.render('consultas', { resultados: registros });
-            }
-        });
+    try {
+        const registros = await contacto.find({}).sort({ [criterio]: 1 });
+        res.render('consultas', { resultados: registros });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al ordenar los contactos');
+    }
 });
 
-
-
-router.post('/enviar', (req, res) => {
+// Ruta para crear
+router.post('/crear', async (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
 
-    const nuevoContacto = new contacto({ nombre, telefono, email, mensaje });
-
-    nuevoContacto.save((err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al enviar el formulario');
-        } else {
-            res.render('index', { muestra: 'Formulario enviado exitosamente' });
-        }
-    });
+    try {
+        const nuevoContacto = new contacto({ nombre, telefono, email, mensaje });
+        await nuevoContacto.save();
+        res.status(201).send('Contacto creado exitosamente');
+    } catch (err) {
+        console.error('Error al guardar el contacto:', err);
+        res.status(500).send('Hubo un error al crear el contacto');
+    }
 });
 
-router.post('/actualizar', (req, res) => {
+// Ruta para actualizar desde formulario
+router.post('/actualizar', async (req, res) => {
     const { nombre, telefono, email, mensaje, id } = req.body;
 
-    contacto.updateOne(
-        { _id: id },  // Filtrar por el ID del contacto
-        { nombre, telefono, email, mensaje },  // Los nuevos valores
-        (err) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error al actualizar el contacto');
-            } else {
-                res.render('index', { muestra: 'Datos modificados exitosamente' });
-            }
-        }
-    );
+    try {
+        await contacto.updateOne({ _id: id }, { nombre, telefono, email, mensaje });
+        res.render('index', { muestra: 'Datos modificados exitosamente' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error al actualizar el contacto');
+    }
 });
 
 module.exports = router;

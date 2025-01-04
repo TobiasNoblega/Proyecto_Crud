@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
 const session = require('express-session');
+const router = require('./router');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(session({
 
 
 app.use('/',require('./router.js'));
+app.use('/', router);
 
 dotenv.config({path: './env/.env'});
 
