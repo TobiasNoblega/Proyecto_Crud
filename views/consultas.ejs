@@ -12,7 +12,7 @@
         <table class="table table-bordered tabled-striped text-center mt-4">
             <thead>
                 <tr>
-                    <th><a href="/consultas/<%= 'idcontacto' %>" class="table-header"> Id de Usuario <i class='bx bxs-up-arrow' ></i></a></i></th>
+                    <!--<th><a href="/consultas/<%= 'idcontacto' %>" class="table-header"> Id de Usuario <i class='bx bxs-up-arrow' ></i></a></i></th>-->
                     <th><a href="/consultas/<%= 'nombre' %>" class="table-header"> Nombre <i class='bx bxs-up-arrow' ></i></a></i></th>
                     <th>Telefono</th>
                     <th>E-mail</th>
@@ -28,14 +28,16 @@
                 <% }else{ %>
                 <% resultados.forEach((usuario)=>{ %>
                     <tr>
-                        <td> <%= usuario.idcontacto %></td>
+                        <!--<td> <%= usuario.idcontacto %></td>-->
                         <td> <%= usuario.nombre %></td>
                         <td> <%= usuario.telefono %></td>
                         <td> <%= usuario.email %></td>
                         <td> <%= usuario.mensaje %></td>
                         <td>
-                           <a href="/modificar/<%= usuario.idcontacto %>" class="btn btn-outline-info">Editar</a>
-                           <a href="/eliminar/<%= usuario.idcontacto %>" class="btn btn-outline-danger">Borrar</a>
+                           <!--<a href="/modificar/<%= usuario.idcontacto %>" class="btn btn-outline-info">Editar</a>-->
+                           <a href="/modificar" class="btn btn-outline-info">Editar</a>
+                           <!--<a href="/eliminar/<%= usuario.idcontacto %>" class="btn btn-outline-danger">Borrar</a>-->
+                           <a href="/eliminar" class="btn btn-outline-danger">Borrar</a>
                         </td>
                     </tr>
                 <% })} %>
