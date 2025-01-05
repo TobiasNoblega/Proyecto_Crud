@@ -35,60 +35,6 @@ router.get('/consultas', async (req, res) => {
     }
 });
 
-// Ruta modificar
-router.get('/modificar/:id', async (req, res) => {
-    const id = req.params.id;
-    try {
-        const usuario = await contacto.findById(id);
-        if (!usuario) {
-            return res.status(404).send('Contacto no encontrado');
-        }
-        res.render('modificar', { usuario });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error al obtener el contacto');
-    }
-});
-
-router.post('/modificar/:id', async (req, res) => {
-    const id = req.params.id;
-    const { nombre, telefono, email, mensaje } = req.body;
-
-    try {
-        await contacto.updateOne({ _id: id }, { nombre, telefono, email, mensaje });
-        res.render('index', { muestra: 'Datos modificados exitosamente' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error al modificar el contacto');
-    }
-});
-
-// Ruta para eliminar
-router.get('/eliminar/:id', async (req, res) => {
-    const id = req.params.id;
-
-    try {
-        await contacto.deleteOne({ _id: id });
-        res.render('index', { muestra: 'Contacto eliminado con éxito' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error al eliminar el contacto');
-    }
-});
-
-// Ruta para ordenar
-router.get('/consultas/:ordena', async (req, res) => {
-    const criterio = req.params.ordena;
-
-    try {
-        const registros = await contacto.find({}).sort({ [criterio]: 1 });
-        res.render('consultas', { resultados: registros });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error al ordenar los contactos');
-    }
-});
-
 // Ruta para crear
 router.post('/crear', async (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
@@ -100,6 +46,59 @@ router.post('/crear', async (req, res) => {
     } catch (err) {
         console.error('Error al guardar el contacto:', err);
         res.status(500).send('Hubo un error al crear el contacto');
+    }
+});
+
+// Ruta modificar
+router.post('/modificar', async (req, res) => {
+    const { nombre, telefono, email, mensaje } = req.body;
+
+    try {
+        const contactoModificado = await contacto.findOneAndUpdate(
+            { email }, // Filtro basado en email
+            { nombre, telefono, mensaje }, // Campos a actualizar
+            { new: true } // Retorna el contacto modificado
+        );
+
+        if (contactoModificado) {
+            res.render('index', { muestra: 'Contacto modificado exitosamente' });
+        } else {
+            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
+        }
+    } catch (error) {
+        console.error("Error al modificar el contacto:", error);
+        res.status(500).send("Hubo un error al modificar el contacto");
+    }
+});
+
+// Ruta para eliminar
+router.post('/eliminar', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const resultado = await contacto.deleteOne({ email });
+
+        if (resultado.deletedCount > 0) {
+            res.render('index', { muestra: 'Contacto eliminado con éxito' });
+        } else {
+            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
+        }
+    } catch (error) {
+        console.error("Error al eliminar el contacto:", error);
+        res.status(500).send("Hubo un error al eliminar el contacto");
+    }
+});
+
+// Ruta para ordenar
+router.get('/consultas/:ordena', async (req, res) => {
+    const criterio = req.params.ordena;
+
+    try {
+        const contactos = await contacto.find({}).sort({ [criterio]: 1 });
+        res.render('consultas', { resultados: contactos });
+    } catch (error) {
+        console.error("Error al ordenar los contactos:", error);
+        res.status(500).send("Hubo un error al ordenar los contactos");
     }
 });
 
