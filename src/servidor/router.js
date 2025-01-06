@@ -14,17 +14,7 @@ router.get('/login',(req,res)=>{
     res.render('login');
 });
 
-// Ruta consultas
-//router.get('/consultas', (req, res) => {
-//    contacto.find({}, (err, registros) => {
-//        if (err) {
-//            console.error(err);
-//            res.status(500).send('Error al obtener contactos');
-//        } else {
-//            res.render('consultas', { resultados: registros });
-//        }
-//    });
-//});
+//ruta consultas
 router.get('/consultas', async (req, res) => {
     try {
         const contactos = await contacto.find({});
@@ -114,5 +104,16 @@ router.post('/actualizar', async (req, res) => {
         res.status(500).send('Error al actualizar el contacto');
     }
 });
+
+// Ruta registro
+router.get('/registro', (req, res) => {
+    res.render('registro');
+});
+
+router.post('/registro', (req, res) => {
+    const { usuario, password } = req.body;
+    res.send('Usuario registrado correctamente');
+});
+
 
 module.exports = router;

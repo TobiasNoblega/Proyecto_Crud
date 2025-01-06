@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
 const bcryptjs = require('bcryptjs');
 const session = require('express-session');
@@ -17,6 +18,27 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.post('/registrar', async (req, res) => {
+    const { nombre, usuario, email, password } = req.body;
+
+    try {
+        const nuevoUsuario = new Usuario({
+            nombre,
+            usuario,
+            email,
+            password,
+        });
+        await nuevoUsuario.save();
+        res.redirect('/login');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al registrar usuario');
+    }
+});
+
+// Motor de plantillas
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../../views'));
 
 app.use('/',require('./router.js'));
 app.use('/', router);
