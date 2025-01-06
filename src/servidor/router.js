@@ -40,6 +40,46 @@ router.post('/crear', async (req, res) => {
 });
 
 // Ruta modificar
+//router.post('/modificar', async (req, res) => {
+//    const { nombre, telefono, email, mensaje } = req.body;
+
+//    try {
+//        const contactoModificado = await contacto.findOneAndUpdate(
+//            { email }, // Filtro basado en email
+//            { nombre, telefono, mensaje }, // Campos a actualizar
+//            { new: true } // Retorna el contacto modificado
+//        );
+
+//        if (contactoModificado) {
+//            res.render('index', { muestra: 'Contacto modificado exitosamente' });
+//        } else {
+//            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
+//        }
+//    } catch (error) {
+//        console.error("Error al modificar el contacto:", error);
+//        res.status(500).send("Hubo un error al modificar el contacto");
+//    }
+//});
+
+// Ruta modificar
+router.get('/modificar/:email', async (req, res) => {
+    const { email } = req.params;
+
+    try {
+        const contactoEncontrado = await contacto.findOne({ email });
+
+        if (contactoEncontrado) {
+            res.render('editar', { contacto: contactoEncontrado });
+        } else {
+            res.status(404).send('No se encontró un contacto con el email proporcionado');
+        }
+    } catch (error) {
+        console.error("Error al obtener el contacto:", error);
+        res.status(500).send("Hubo un error al obtener el contacto para editar");
+    }
+});
+
+// Ruta guardar contacto modificado
 router.post('/modificar', async (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
 
@@ -51,9 +91,9 @@ router.post('/modificar', async (req, res) => {
         );
 
         if (contactoModificado) {
-            res.render('index', { muestra: 'Contacto modificado exitosamente' });
+            res.redirect('/consultas'); // Redirige a la lista de contactos después de guardar
         } else {
-            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
+            res.status(404).send('No se encontró un contacto con el email proporcionado');
         }
     } catch (error) {
         console.error("Error al modificar el contacto:", error);
@@ -92,12 +132,12 @@ router.get('/consultas/:ordena', async (req, res) => {
     }
 });
 
-// Ruta para actualizar desde formulario
+// Ruta para actualizar
 router.post('/actualizar', async (req, res) => {
-    const { nombre, telefono, email, mensaje, id } = req.body;
+    const { nombre, telefono, email, mensaje } = req.body;
 
     try {
-        await contacto.updateOne({ _id: id }, { nombre, telefono, email, mensaje });
+        await contacto.updateOne({ email }, { nombre, telefono, mensaje });
         res.render('index', { muestra: 'Datos modificados exitosamente' });
     } catch (err) {
         console.error(err);

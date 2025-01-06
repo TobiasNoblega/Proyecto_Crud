@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Editar Contacto</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+
+    <main class="centrado sombras">
+        <h1>Editar Contacto</h1>
+        <form action="/modificar" method="post" class="formulario">
+            <div class="campos">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" value="<%= contacto.nombre %>" class="input" required>
+            </div>
+            <div class="campos">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" value="<%= contacto.telefono %>" class="input" required>
+            </div>
+            <div class="campos">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<%= contacto.email %>" class="input" readonly>
+            </div>
+            <div class="campos">
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" required><%= contacto.mensaje %></textarea>
+            </div>
+            <button type="submit">Guardar cambios</button>
+        </form>
+    </main>
+
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>
