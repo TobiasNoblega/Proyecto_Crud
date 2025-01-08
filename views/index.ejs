@@ -23,11 +23,13 @@
 	</article>-->
 
 	<main class="centrado sombras">
-		<% if(typeof muestra !== 'undefined'){ let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta' %>
-			<p class="centrado <%= fondo %> ">
-				<%= muestra %>
-			</p>
-		<% } %>
+		<% if (typeof muestra !== 'undefined') { 
+            let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; 
+        %>
+            <p class="centrado <%= fondo %>">
+                <%= muestra %>
+            </p>
+        <% } %>
 		<!--<h2 class="titulo">Conocenos</h2>
 
 		<div class="contenido">

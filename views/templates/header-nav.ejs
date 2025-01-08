@@ -3,9 +3,21 @@
 </header>
 
 <nav class="nav-bg">
-    <div class="navegacion-principal centrado" >
-        <a href="/" target="_self">Inicio</a>
-        <a href="/consultas" target="_self">Consultas</a>
-        <a href="/login" class="">Login</a>
+    <div class="navegacion-principal centrado">
+       <% if (currentPath !== '/') { %>
+            <a href="/">Inicio</a>
+        <% } %>
+        <% if (currentPath !== '/consultas') { %>
+            <a href="/consultas">Consultas</a>
+        <% } %>
+        <% if (currentPath !== '/login') { %>
+          <% if (!usuario) { %>
+            <a href="/login">Iniciar Sesión</a>
+          <% } else { %>
+             <form action="/logout" method="post" class="inline-form">
+                 <button type="submit">Cerrar Sesión</button>
+             </form>
+          <% } %>
+        <% } %>
     </div>
 </nav>

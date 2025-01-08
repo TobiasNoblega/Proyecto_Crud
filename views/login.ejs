@@ -8,7 +8,12 @@
     <%- include('./templates/header-nav.ejs') %>
     <main class="centrado sombras">
         <div>
-            <form action="/auth" method="post" class="formulario">
+            <% if (error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+            <form action="/login" method="post" class="formulario">
                 <fieldset>
                     <legend class="centrado">Iniciar Sesión</legend>
                     <div class="">
@@ -38,6 +43,16 @@
                                 class="input">
                         </div>
                     </div>
+                    
+                    <!-- Mostrar mensajes de error o éxito -->
+                    <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
+                        <div class="alert alert-danger">
+                            <% messages.forEach(function(msg) { %>
+                                <p><%= msg %></p>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
                     <div class="campos flex alinear-derecha">
                         <input class="boton" type="submit" value="Iniciar Sesión">
                         <a class="boton" href="/registro">Registrarme</a>

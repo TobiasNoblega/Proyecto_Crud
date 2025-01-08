@@ -1,17 +1,23 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const conexion = require('./bbdd.js');
 const crud = require('./crud.js');
+const bcrypt = require('bcryptjs');
+const Usuario = require('./models/Usuario.js');
 const contacto = require('./models/contacto');
 
-//Ruta inicial
-router.get('/',(req,res)=>{
-    res.render('index');
+// Middlewares
+router.use((req, res, next) => {
+    res.locals.usuario = req.session?.usuario || null;
+    res.locals.messages = [];
+    res.locals.currentPath = req.path;
+    next();
 });
 
-//Ruta login
-router.get('/login',(req,res)=>{
-    res.render('login');
+//Ruta inicial
+router.get('/', (req, res) => {
+    res.render('index');
 });
 
 //ruta consultas
@@ -25,6 +31,93 @@ router.get('/consultas', async (req, res) => {
     }
 });
 
+// Ruta login
+router.get('/login', (req, res) => {
+    res.render('login', { messages: [] });
+});
+
+router.get('/login', (req, res) => {
+    res.render('login', { error: null, currentPath: req.path });
+});
+
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const usuario = await Usuario.findOne({ username });
+
+        if (!usuario) {
+            return res.render('login', {
+                error: 'Usuario no encontrado',
+                currentPath: req.path
+            });
+        }
+
+        const esValido = await usuario.comparePassword(password);
+        if (!esValido) {
+            return res.render('login', {
+                error: 'Contraseña incorrecta',
+                currentPath: req.path
+            });
+        }
+
+        req.session.usuario = { username: usuario.username };
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        res.render('login', {
+            error: 'Error en el servidor. Inténtalo más tarde.',
+            currentPath: req.path
+        });
+    }
+});
+
+// Ruta registro
+router.get('/registro', (req, res) => {
+    res.render('registro', { error: null, currentPath: req.path });
+});
+
+router.post('/registro', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const usuarioExistente = await Usuario.findOne({ username });
+        if (usuarioExistente) {
+            return res.render('registro', { 
+                error: 'El nombre de usuario ya está registrado', 
+                currentPath: req.path 
+            });
+        }
+
+        const nuevoUsuario = new Usuario({ username, password });
+        await nuevoUsuario.save();
+
+        res.redirect('/login');
+    } catch (error) {
+        console.error('Error al registrar usuario:', error);
+        if (error.code === 11000) {
+            return res.render('registro', { 
+                error: 'El nombre de usuario ya está registrado', 
+                currentPath: req.path 
+            });
+        }
+        res.status(500).render('registro', { 
+            error: 'Error en el servidor. Inténtalo más tarde.', 
+            currentPath: req.path 
+        });
+    }
+});
+
+// rutas protegidas por sesion
+function verificarAutenticacion(req, res, next) {
+    if (req.session && req.session.usuario) {
+        return next();  
+    } else {
+        return res.redirect('/login'); 
+    }
+}
+router.use(['/modificar/:email', '/eliminar', '/perfil'], verificarAutenticacion);
+
 // Ruta para crear
 router.post('/crear', async (req, res) => {
     const { nombre, telefono, email, mensaje } = req.body;
@@ -32,34 +125,16 @@ router.post('/crear', async (req, res) => {
     try {
         const nuevoContacto = new contacto({ nombre, telefono, email, mensaje });
         await nuevoContacto.save();
-        res.status(201).send('Contacto creado exitosamente');
+
+        // Enviar mensaje de éxito al índice
+        res.render('index', { muestra: 'Contacto creado exitosamente', currentPath: req.path });
     } catch (err) {
         console.error('Error al guardar el contacto:', err);
-        res.status(500).send('Hubo un error al crear el contacto');
+        
+        // Enviar mensaje de error al índice
+        res.render('index', { muestra: 'Hubo un error al crear el contacto', currentPath: req.path });
     }
 });
-
-// Ruta modificar
-//router.post('/modificar', async (req, res) => {
-//    const { nombre, telefono, email, mensaje } = req.body;
-
-//    try {
-//        const contactoModificado = await contacto.findOneAndUpdate(
-//            { email }, // Filtro basado en email
-//            { nombre, telefono, mensaje }, // Campos a actualizar
-//            { new: true } // Retorna el contacto modificado
-//        );
-
-//        if (contactoModificado) {
-//            res.render('index', { muestra: 'Contacto modificado exitosamente' });
-//        } else {
-//            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
-//        }
-//    } catch (error) {
-//        console.error("Error al modificar el contacto:", error);
-//        res.status(500).send("Hubo un error al modificar el contacto");
-//    }
-//});
 
 // Ruta modificar
 router.get('/modificar/:email', async (req, res) => {
@@ -67,15 +142,12 @@ router.get('/modificar/:email', async (req, res) => {
 
     try {
         const contactoEncontrado = await contacto.findOne({ email });
+        if (!contactoEncontrado) return res.status(404).send('No se encontró el contacto');
 
-        if (contactoEncontrado) {
-            res.render('editar', { contacto: contactoEncontrado });
-        } else {
-            res.status(404).send('No se encontró un contacto con el email proporcionado');
-        }
+        res.render('editar', { contacto: contactoEncontrado });
     } catch (error) {
-        console.error("Error al obtener el contacto:", error);
-        res.status(500).send("Hubo un error al obtener el contacto para editar");
+        console.error('Error al obtener contacto:', error);
+        res.status(500).send('Error en el servidor');
     }
 });
 
@@ -85,19 +157,19 @@ router.post('/modificar', async (req, res) => {
 
     try {
         const contactoModificado = await contacto.findOneAndUpdate(
-            { email }, // Filtro basado en email
-            { nombre, telefono, mensaje }, // Campos a actualizar
-            { new: true } // Retorna el contacto modificado
+            { email },
+            { nombre, telefono, mensaje },
+            { new: true }
         );
 
-        if (contactoModificado) {
-            res.redirect('/consultas'); // Redirige a la lista de contactos después de guardar
-        } else {
-            res.status(404).send('No se encontró un contacto con el email proporcionado');
+        if (!contactoModificado) {
+            return res.render('index', { muestra: 'Contacto no encontrado' });
         }
+
+        res.render('index', { muestra: 'Contacto modificado exitosamente' });
     } catch (error) {
-        console.error("Error al modificar el contacto:", error);
-        res.status(500).send("Hubo un error al modificar el contacto");
+        console.error('Error al modificar el contacto:', error);
+        res.status(500).send('Error en el servidor');
     }
 });
 
@@ -109,13 +181,13 @@ router.post('/eliminar', async (req, res) => {
         const resultado = await contacto.deleteOne({ email });
 
         if (resultado.deletedCount > 0) {
-            res.render('index', { muestra: 'Contacto eliminado con éxito' });
+            res.render('index', { muestra: 'Contacto eliminado con éxito', currentPath: req.path });
         } else {
-            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado' });
+            res.render('index', { muestra: 'No se encontró un contacto con el email proporcionado', currentPath: req.path });
         }
     } catch (error) {
         console.error("Error al eliminar el contacto:", error);
-        res.status(500).send("Hubo un error al eliminar el contacto");
+        res.render('index', { muestra: 'Hubo un error al eliminar el contacto', currentPath: req.path });
     }
 });
 
@@ -125,7 +197,7 @@ router.get('/consultas/:ordena', async (req, res) => {
 
     try {
         const contactos = await contacto.find({}).sort({ [criterio]: 1 });
-        res.render('consultas', { resultados: contactos });
+        res.render('consultas', { resultados: contactos, usuario: req.session?.usuario || null, currentPath: req.path });
     } catch (error) {
         console.error("Error al ordenar los contactos:", error);
         res.status(500).send("Hubo un error al ordenar los contactos");
@@ -138,21 +210,23 @@ router.post('/actualizar', async (req, res) => {
 
     try {
         await contacto.updateOne({ email }, { nombre, telefono, mensaje });
-        res.render('index', { muestra: 'Datos modificados exitosamente' });
+        res.render('index', { muestra: 'Datos modificados exitosamente', currentPath: req.path });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al actualizar el contacto');
     }
 });
 
-// Ruta registro
-router.get('/registro', (req, res) => {
-    res.render('registro');
-});
 
-router.post('/registro', (req, res) => {
-    const { usuario, password } = req.body;
-    res.send('Usuario registrado correctamente');
+// Ruta para cerrar sesión
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error al cerrar sesión:', err);
+            return res.redirect('/');
+        }
+        res.redirect('/');
+    });
 });
 
 

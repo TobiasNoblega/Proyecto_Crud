@@ -8,42 +8,24 @@
     <%- include('./templates/header-nav.ejs') %>
     <main class="centrado sombras">
         <div>
-            <form action="/registrar" method="post" class="formulario">
+            <% if (error) { %>
+                <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+            <form action="/registro" method="post" class="formulario">
                 <fieldset>
-                    <legend class="centrado">Registro</legend>
+                    <legend class="centrado">Registrarse</legend>
                     <div class="">
-                        <div class="campos">
-                            <label for="nombre">Nombre:</label>
-                            <input 
-                                type="text" 
-                                name="nombre" 
-                                id="nombre" 
-                                placeholder="Tu nombre completo" 
-                                required 
-                                minlength="3" 
-                                maxlength="45"
-                                class="input">
-                        </div>
                         <div class="campos">
                             <label for="usuario">Usuario:</label>
                             <input 
                                 type="text" 
                                 name="usuario" 
                                 id="usuario" 
-                                placeholder="Crea un nombre de usuario" 
+                                placeholder="Ingresa tu usuario" 
                                 required 
                                 minlength="3" 
-                                maxlength="45"
-                                class="input">
-                        </div>
-                        <div class="campos">
-                            <label for="email">Correo:</label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                id="email" 
-                                placeholder="Tu correo electrónico" 
-                                required
+                                maxlength="45" 
+                                autocomplete="username"
                                 class="input">
                         </div>
                         <div class="campos">
@@ -52,15 +34,30 @@
                                 type="password" 
                                 name="password" 
                                 id="password" 
-                                placeholder="Crea una contraseña" 
+                                placeholder="Ingresa tu contraseña" 
                                 required 
-                                minlength="6"
+                                minlength="6" 
+                                autocomplete="new-password"
+                                class="input">
+                        </div>
+                        <div class="campos">
+                            <label for="confirmarPassword">Confirmar Contraseña:</label>
+                            <input 
+                                type="password" 
+                                name="confirmarPassword" 
+                                id="confirmarPassword" 
+                                placeholder="Confirmar contraseña" 
+                                required 
+                                minlength="6" 
+                                autocomplete="new-password"
                                 class="input">
                         </div>
                     </div>
+                    <% if (typeof mensaje !== 'undefined') { %>
+                        <p class="centrado <%= tipo %>"><%= mensaje %></p>
+                    <% } %>
                     <div class="campos flex alinear-derecha">
                         <input class="boton" type="submit" value="Registrarme">
-                        <a class="boton" href="/login">Volver al Login</a>
                     </div>
                 </fieldset>
             </form>
