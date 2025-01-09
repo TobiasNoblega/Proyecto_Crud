@@ -6,8 +6,8 @@ const Usuario = require('./models/Usuario');
 // login
 passport.use(new LocalStrategy(
     {
-        usernameField: 'usuario',  // Nombre del campo de usuario en el formulario
-        passwordField: 'password', // Nombre del campo de contraseña en el formulario
+        usernameField: 'usuario',  
+        passwordField: 'password', 
     },
     async (usuario, password, done) => {
         try {
@@ -31,12 +31,10 @@ passport.use(new LocalStrategy(
     }
 ));
 
-// Serializar usuario
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
-// Deserializar usuario
 passport.deserializeUser(async (id, done) => {
     try {
         const usuario = await Usuario.findById(id);

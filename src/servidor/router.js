@@ -41,14 +41,12 @@ router.post('/login', async (req, res) => {
 
     try {
         const usuario = await Usuario.findOne({ username });
-
         if (!usuario) {
             return res.render('login', {
                 error: 'Usuario no encontrado',
                 currentPath: req.path
             });
         }
-
         const esValido = await usuario.comparePassword(password);
         if (!esValido) {
             return res.render('login', {
@@ -56,7 +54,6 @@ router.post('/login', async (req, res) => {
                 currentPath: req.path
             });
         }
-
         req.session.usuario = { username: usuario.username };
         return res.redirect('/');
     } catch (error) {
@@ -115,13 +112,9 @@ router.post('/crear', async (req, res) => {
     try {
         const nuevoContacto = new contacto({ nombre, telefono, email, mensaje });
         await nuevoContacto.save();
-
-        // Enviar mensaje de éxito al índice
         res.render('index', { muestra: 'Contacto creado exitosamente', currentPath: req.path });
     } catch (err) {
         console.error('Error al guardar el contacto:', err);
-        
-        // Enviar mensaje de error al índice
         res.render('index', { muestra: 'Hubo un error al crear el contacto', currentPath: req.path });
     }
 });
