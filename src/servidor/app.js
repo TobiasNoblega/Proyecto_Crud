@@ -34,7 +34,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
-    res.locals.usuario = req.user || null;
+    res.locals.usuario = req.session.usuario || null;
     res.locals.currentPath = req.path;
     next();
 });

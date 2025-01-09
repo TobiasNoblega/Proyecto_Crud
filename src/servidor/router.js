@@ -33,10 +33,6 @@ router.get('/consultas', async (req, res) => {
 
 // Ruta login
 router.get('/login', (req, res) => {
-    res.render('login', { messages: [] });
-});
-
-router.get('/login', (req, res) => {
     res.render('login', { error: null, currentPath: req.path });
 });
 
@@ -65,7 +61,7 @@ router.post('/login', async (req, res) => {
         return res.redirect('/');
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
-        res.render('login', {
+        return res.render('login', {
             error: 'Error en el servidor. Inténtalo más tarde.',
             currentPath: req.path
         });
@@ -89,19 +85,13 @@ router.post('/registro', async (req, res) => {
             });
         }
 
-        const nuevoUsuario = new Usuario({ username, password });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const nuevoUsuario = new Usuario({ username, password: hashedPassword });
         await nuevoUsuario.save();
-
         res.redirect('/login');
     } catch (error) {
         console.error('Error al registrar usuario:', error);
-        if (error.code === 11000) {
-            return res.render('registro', { 
-                error: 'El nombre de usuario ya está registrado', 
-                currentPath: req.path 
-            });
-        }
-        res.status(500).render('registro', { 
+        res.render('registro', { 
             error: 'Error en el servidor. Inténtalo más tarde.', 
             currentPath: req.path 
         });

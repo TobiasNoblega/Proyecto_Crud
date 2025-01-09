@@ -6,15 +6,15 @@ const UsuarioSchema = new mongoose.Schema({
     password: { type: String, required: true },
 });
 
-UsuarioSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-});
+//UsuarioSchema.pre('save', async function (next) {
+//    if (!this.isModified('password')) return next();
+//    const salt = await bcrypt.genSalt(10);
+//    this.password = await bcrypt.hash(this.password, salt);
+//    next();
+//});
 
-UsuarioSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password);
+UsuarioSchema.methods.comparePassword = function(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
 };
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);
