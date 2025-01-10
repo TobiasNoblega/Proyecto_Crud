@@ -1,5 +1,6 @@
 const conexion = require('./bbdd.js');
 
+// este crud ya no sirve porque estaba diseñado para mysql
 exports.enviar = (req,res)=>{
     const datos = req.body;
     const {nombre,telefono,email,mensaje} = datos;

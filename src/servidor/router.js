@@ -103,7 +103,7 @@ function verificarAutenticacion(req, res, next) {
         return res.redirect('/login'); 
     }
 }
-router.use(['/modificar/:email', '/eliminar', '/perfil'], verificarAutenticacion);
+//router.use(['/modificar/:email', '/eliminar', '/perfil'], verificarAutenticacion);
 
 // Ruta para crear
 router.post('/crear', async (req, res) => {

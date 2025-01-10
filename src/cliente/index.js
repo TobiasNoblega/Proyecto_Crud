@@ -1,4 +1,4 @@
-
+//"start": "nodemon ./src/servidor/app.js",
 
 // document.querySelector('.formulario').addEventListener('input', function(evento) {
 //     evento.preventDefault();
