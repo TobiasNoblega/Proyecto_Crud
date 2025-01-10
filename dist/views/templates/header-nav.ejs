@@ -1,0 +1,23 @@
+<header>
+    <h1 class="titulo">Cocina en casa <span>recetas y algo mas</span> </h1>
+</header>
+
+<nav class="nav-bg">
+    <div class="navegacion-principal centrado">
+       <% if (currentPath !== '/') { %>
+            <a href="/">Inicio</a>
+        <% } %>
+        <% if (currentPath !== '/consultas') { %>
+            <a href="/consultas">Consultas</a>
+        <% } %>
+        <% if (currentPath !== '/login') { %>
+          <% if (!usuario) { %>
+            <a href="/login">Iniciar Sesión</a>
+          <% } else { %>
+             <form action="/logout" method="post" class="inline-form">
+                 <button type="submit">Cerrar Sesión</button>
+             </form>
+          <% } %>
+        <% } %>
+    </div>
+</nav>

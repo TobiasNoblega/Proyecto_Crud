@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Cocina en Casa</title>
+	<%- include('./templates/head.ejs') %>
+</head>
+<body>
+	<%- include('./templates/header-nav.ejs') %>
+	
+	<!--<article class="articulo">
+		 <div class="articulo-fondo">
+			 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google-maps" width="92" height="92" viewBox="0 0 24 24" stroke-width="2" stroke="#ff9300" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+			  <path d="M12 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0" />
+			  <path d="M6.428 12.494l7.314 -9.252" />
+			  <path d="M10.002 7.935l-2.937 -2.545" />
+			  <path d="M17.693 6.593l-8.336 9.979" />
+			  <path d="M17.591 6.376c.472 .907 .715 1.914 .709 2.935a7.263 7.263 0 0 1 -.72 3.18a19.085 19.085 0 0 1 -2.089 3c-.784 .933 -1.49 1.93 -2.11 2.98c-.314 .62 -.568 1.27 -.757 1.938c-.121 .36 -.277 .591 -.622 .591c-.315 0 -.463 -.136 -.626 -.593a10.595 10.595 0 0 0 -.779 -1.978a18.18 18.18 0 0 0 -1.423 -2.091c-.877 -1.184 -2.179 -2.535 -2.853 -4.071a7.077 7.077 0 0 1 -.621 -2.967a6.226 6.226 0 0 1 1.476 -4.055a6.25 6.25 0 0 1 4.811 -2.245a6.462 6.462 0 0 1 1.918 .284a6.255 6.255 0 0 1 3.686 3.092z" />
+			</svg>
+			<p>San justo, Buenos Aires</p>
+			<a class="boton" href="#" target="_blank" >Contactanos</a>	
+		 </div>
+	</article>-->
+
+	<main class="centrado sombras">
+		<% if (typeof muestra !== 'undefined') { 
+            let fondo = (muestra.includes('No')) ? 'alerta' : 'acepta'; 
+        %>
+            <p class="centrado <%= fondo %>">
+                <%= muestra %>
+            </p>
+        <% } %>
+		<!--<h2 class="titulo">Conocenos</h2>
+
+		<div class="contenido">
+			<section class="contenido-tarjeta">
+				<h3>Blog</h3>
+				<div class="iconos">
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chef-hat" width="48" height="48" viewBox="0 0 24 24" stroke-width="2.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+				  		<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+				  		<path d="M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 7.126h-12v-7.126a4 4 0 1 1 2.092 -7.723a4 4 0 0 1 3.908 -3.151z" />
+				  		<path d="M6.161 17.009l11.839 -.009" />
+					</svg>		
+				</div>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+			</section>
+
+			<section class="contenido-tarjeta">
+				<h3>Recetas</h3>
+				<div class="iconos">
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tools-kitchen-2" width="48" height="48" viewBox="0 0 24 24" stroke-width="2.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+				  		<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+				  		<path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3" />
+					</svg>
+
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-egg-fried" width="48" height="48" viewBox="0 0 24 24" stroke-width="2.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  					<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  					<path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+  					<path d="M14 3a5 5 0 0 1 4.872 6.13a3 3 0 0 1 .178 5.681a3 3 0 1 1 -4.684 3.626a5 5 0 1 1 -8.662 -5a5 5 0 1 1 4.645 -8.856a4.982 4.982 0 0 1 3.651 -1.585z" />
+					</svg>
+				</div>
+
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
+				</p>
+			</section>
+			
+			<section class="contenido-tarjeta">
+				<h3>Contacto</h3>
+				<div class="iconos">
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-address-book" width="48" height="48" viewBox="0 0 24 24" stroke-width="2.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+					  <path d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+					  <path d="M10 16h6" />
+					  <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+					  <path d="M4 8h3" />
+					  <path d="M4 12h3" />
+					  <path d="M4 16h3" />
+					</svg>
+				</div>
+
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+				</p>
+			</section>
+		</div>-->
+
+		<div>
+			<form class="formulario" action="/crear" method="post" enctype="text/html">
+				<fieldset>
+					<legend>Contactanos</legend>
+					<div class="formulario-campos">
+						<div class="campos">
+							<label for="nombre">Nombre:</label>
+							<input  class="input" type="text" name="nombre" id="nombre" placeholder="Tu nombre" required minlength="3" maxlength="45" autocomplete="off" pattern="^[A-Za-záéíóúÁÉÍÓÚüÜ\s]+$" title="Este campo requiere 3 caracteres">
+						</div>
+						
+						<div class="campos">
+							<label for="telefono">Telefono:</label>
+							<input  class="input" type="tel" name="telefono" id="telefono" placeholder="011 5555-5555" required minlength="8" maxlength="18" autocomplete="off" pattern="^[0-9]+[-|\s]?[0-9]+[-|\s]?[0-9]+$" title="Este campo requiere minimo 8 digitos solo numericos">
+						</div>
+
+						<div class="campos">
+							<label for="email">Correo:</label>
+							<input  class="input" type="email" name="email" id="email" placeholder="email@servidor.com" required maxlength="25" autocomplete="off" pattern="^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,25}$" title="Este campo necesita ser un e-mail valido">						
+						</div>
+						
+						<div class="campos">
+							<label for="mensaje">Mensaje:</label>
+							<textarea placeholder="Dejanos tu mensaje" name="mensaje" id="mensaje" maxlength="140"></textarea>
+						</div>
+					</div>
+
+					<div class="campos flex alinear-derecha">
+						<input class="boton" type="submit" id="aceptar" value="Enviar">
+						<input class="boton" type="reset" id="resetar" value="Borrar">
+					</div>
+				</fieldset>
+			</form>	
+		</div>
+	</main>
+	<%- include('./templates/footer.ejs') %>
+	<script src="./js/index.js" type="module"></script>
+</body>
+</html>

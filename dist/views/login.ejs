@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Login</title>
+    <%- include('./templates/head.ejs') %>
+</head>
+<body>
+    <%- include('./templates/header-nav.ejs') %>
+    <main class="centrado sombras">
+        <div>
+            <% if (error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+            <form action="/login" method="POST" class="formulario">
+                <fieldset>
+                    <legend class="centrado">Iniciar Sesión</legend>
+                    <div class="">
+                        <div class="campos">
+                            <label for="usuario">Usuario:</label>
+                            <input 
+                                type="text" 
+                                name="usuario" 
+                                id="usuario" 
+                                placeholder="Ingresa tu usuario" 
+                                required 
+                                minlength="3" 
+                                maxlength="45" 
+                                autocomplete="username"
+                                class="input">
+                        </div>
+                        <div class="campos">
+                            <label for="password">Contraseña:</label>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="password" 
+                                placeholder="Ingresa tu contraseña" 
+                                required 
+                                minlength="6" 
+                                autocomplete="current-password"
+                                class="input">
+                        </div>
+                    </div>
+                    
+                    <% if (typeof messages !== 'undefined' && messages.length > 0) { %>
+                        <div class="alert alert-danger">
+                            <% messages.forEach(function(msg) { %>
+                                <p><%= msg %></p>
+                            <% }) %>
+                        </div>
+                    <% } %>
+
+                    <div class="campos flex alinear-derecha">
+                        <input class="boton" type="submit" value="Iniciar Sesión">
+                        <a class="boton" href="/registro">Registrarme</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </main>
+    <%- include('./templates/footer.ejs') %>
+</body>
+</html>
